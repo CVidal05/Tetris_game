@@ -1,6 +1,6 @@
 import pygame
 import random
-
+import sys
 
 # Tamaño del juego
 COLUMNAS = 10
@@ -28,6 +28,10 @@ AltScore = MARGEN*2
 # rectImagTitulo = imagTitulo.get_rect()
 
 # Ajustes del juego
+SPEED = 40
+Vx = 4
+Vy = 1
+Vpos = [Vx,Vy]
 
 # Colores 
 Negro = (30, 30, 30)
@@ -35,6 +39,23 @@ Gris = (60, 60, 60)
 Blanco = (200, 200, 200)
 Rojo = (255,0,0)
 Azul = (0,0,255)
+Amarillo = (255,255,0)
+Cyan = (0,255,255)
+Lima = (0,225,0)
+Naranja = (255,152,0)
+Morado = (138,43,226)
+
+#Listas de piezas
+T = [[(0,0),(-1,0),(1,0),(0,-1)],Morado]
+L = [[(0,0),(0,-1),(1,0),(1,1)],Naranja]
+J = [[(0,0),(0,-1),(0,1),(-1,1)],Azul]
+S = [[(0,0),(-1,0),(0,-1),(1,-1)],Lima]
+Z = [[(0,0),(1,0),(0,-1),(-1,-1)],Rojo]
+O = [[(0,0),(0,-1),(1,0),(1,-1)],Amarillo]
+I = [[(0,0),(0,-1),(0,-2),(0,1)],Cyan]
+piezas = [T,L,J,S,Z,O,I]
+
+
 
 # Clase de la ventana del juego , se crea una display para poner lo que queramos sobre ella y esa display ponerla sobre la display_surface que es la pantalla principal
 class Game:
@@ -44,28 +65,21 @@ class Game:
         self.surface = pygame.Surface((LongJuego,AltJuego)) # Ventana
         self.display_surface = pygame.display.get_surface() # Recojo la pantalla principal
         self.rect = self.surface.get_rect(topleft = (MARGEN,MARGEN*3))
-        self.pieza = pygame.sprite.Group() # Un contenedor para guardar varias clases sprite, ya que estos sprites son los cuadrados, el contenedor es la pieza
+        self.grupo = pygame.sprite.Group() # Un contenedor para guardar varias clases sprite, ya que estos sprites son los cuadrados, el contenedor es la pieza
         
         # Lineas
         self.lineas_surface = self.surface.copy() # creo una ventana donde se dibujan las lineas, es igual que la self.surface
         self.lineas_surface.fill((0,255,0)) # La pinto de verde para luego quitarlo
         self.lineas_surface.set_colorkey((0,255,0))
         self.lineas_surface.set_alpha(120)
-        
-        # Piezas
-        # Linea
-#        if piezaAleatoria == 1:
-        self.block1 = Block(self.pieza, (3,0), Rojo)
-        self.block2 = Block(self.pieza, (4,0), Rojo)
-        self.block3 = Block(self.pieza, (5,0), Rojo)
-        self.block4 = Block(self.pieza, (6,0), Rojo)
-        
+            
+        self.pieza = Pieza(random.randint(0,6),self.grupo)
         # T inversa
 #         else:
-#             self.block1 = Block(self.pieza, (3,0), Azul)
-#             self.block2 = Block(self.pieza, (4,0), Azul)
-#             self.block3 = Block(self.pieza, (5,0), Azul)
-#             self.block4 = Block(self.pieza, (4,1), Azul)
+#             self.Bloque1 = Bloque(self.pieza, (3,0), Azul)
+#             self.Bloque2 = Bloque(self.pieza, (4,0), Azul)
+#             self.Bloque3 = Bloque(self.pieza, (5,0), Azul)
+#             self.Bloque4 = Bloque(self.pieza, (4,1), Azul)
     
     def dibujo_lineas(self):
         for col in range(1,COLUMNAS):
@@ -77,7 +91,7 @@ class Game:
     
     def run(self):
         self.surface.fill(Gris)
-        self.pieza.draw(self.surface)
+        self.grupo.draw(self.surface)
         
         self.dibujo_lineas()
         self.display_surface.blit(self.surface, (MARGEN,MARGEN*3)) # Pone (X,Y) la ventana X en la posición Y de la pantalla prinicipal
@@ -109,7 +123,7 @@ class Titulo:
         self.display_surface.blit(self.surface, (MARGEN,MARGEN/2))
 
 # Crea un sprite, un cuadrado
-class Block(pygame.sprite.Sprite):
+class Bloque(pygame.sprite.Sprite):
     def __init__(self, grupo, pos, color):   # Características de la pieza (grupo, posición, color)
         # General
         super().__init__(grupo)
@@ -118,8 +132,21 @@ class Block(pygame.sprite.Sprite):
         
         # Posición
         col,fil=pos
+        col = col + Vx
+        fil = fil + Vy
         x,y = col*tamañoCeldas, fil*tamañoCeldas
         self.rect = self.image.get_rect(topleft = (x,y))
+
+# Crea la clase Pieza, con las características de una pieza
+class Pieza():
+    def __init__(self, tipo, grupo):
+        self.forma = piezas[tipo][0]
+        self.color = piezas[tipo][1]
+        # for de la pieza
+        self.conjunto_pieza = [Bloque(grupo, pos, self.color) for pos in self.forma]
+    
+    
+
 
 
 # Clase del Progama de pygame
@@ -138,6 +165,7 @@ class Main():
         self.game = Game() # se le atribuye la clase, ventana de juego
         self.score = Score() # ventan del Score
         self.titulo = Titulo()
+        
     
     def run(self):
         # Loop del juego
@@ -155,14 +183,16 @@ class Main():
             self.score.run()
             self.titulo.run()
             
+            
             # Actuslización del juego
             pygame.display.update()
             self.clock.tick(60)
 
-if __name__ == '__main__':
-    main = Main()
-    main.run()
+
+main = Main()
+main.run()
     
+
     
     
     
