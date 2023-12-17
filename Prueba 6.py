@@ -74,12 +74,7 @@ class Game:
         self.lineas_surface.set_alpha(120)
             
         self.pieza = Pieza(random.randint(0,6),self.grupo)
-        # T inversa
-#         else:
-#             self.Bloque1 = Bloque(self.pieza, (3,0), Azul)
-#             self.Bloque2 = Bloque(self.pieza, (4,0), Azul)
-#             self.Bloque3 = Bloque(self.pieza, (5,0), Azul)
-#             self.Bloque4 = Bloque(self.pieza, (4,1), Azul)
+      
     
     def dibujo_lineas(self):
         for col in range(1,COLUMNAS):
@@ -130,10 +125,12 @@ class Bloque(pygame.sprite.Sprite):
         self.image = pygame.Surface((tamañoCeldas,tamañoCeldas))
         self.image.fill(color)
         
+        
         # Posición
         col,fil=pos
-        col = col + Vx
+        col = col + Vx 
         fil = fil + Vy
+        #Pieza.moverbajo()
         x,y = col*tamañoCeldas, fil*tamañoCeldas
         self.rect = self.image.get_rect(topleft = (x,y))
 
@@ -144,14 +141,19 @@ class Pieza():
         self.color = piezas[tipo][1]
         # for de la pieza
         self.conjunto_pieza = [Bloque(grupo, pos, self.color) for pos in self.forma]
+        
+    def moverbajo(self):
+        for cuadradito in self.conjunto_pieza:
+            Bloque.fil+= 1
     
-    
+# Timer
+
 
 
 
 # Clase del Progama de pygame
 juego = True
-
+Contador = 0
 class Main():
     def __init__(self):
         
@@ -186,13 +188,9 @@ class Main():
             
             # Actuslización del juego
             pygame.display.update()
-            self.clock.tick(60)
+            self.clock.tick(15)
 
 
 main = Main()
 main.run()
-    
-
-    
-    
     
