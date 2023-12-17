@@ -24,11 +24,6 @@ LongScore = LongTitulo
 AltScore = MARGEN*2
 Imagen1 = pygame.image.load("SCORE.png")
 
-# Titulo
-# letra = pygame.font.SysFont('Arial', 30)
-# imagTitulo = letra.render('TETRIS', True, (200,200,200), Gris )
-# rectImagTitulo = imagTitulo.get_rect()
-
 # Ajustes del juego
 Velbajada = 50
 Vpos = pygame.Vector2(COLUMNAS // 2 , -3)
